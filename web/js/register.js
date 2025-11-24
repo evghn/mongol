@@ -7,7 +7,7 @@ $(() => {
     $("#registerform-passport_another").removeClass("is-valid");
   };
 
-  $("#registerform-passport_type").on("change", function () {
+  $("#registerform-passport_type_id").on("change", function () {
     $("#register-form").yiiActiveForm(
       "validateAttribute",
       "registerform-passport_expire"
