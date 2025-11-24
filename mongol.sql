@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: MySQL-8.4
--- Время создания: Ноя 24 2025 г., 06:58
+-- Время создания: Ноя 24 2025 г., 07:23
 -- Версия сервера: 8.4.6
 -- Версия PHP: 8.3.25
 
@@ -90,6 +90,7 @@ CREATE TABLE `user` (
   `email` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `phone` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `role` tinyint NOT NULL DEFAULT '0',
   `auth_key` varchar(255) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -97,8 +98,9 @@ CREATE TABLE `user` (
 -- Дамп данных таблицы `user`
 --
 
-INSERT INTO `user` (`id`, `name`, `surname`, `patronymic`, `email`, `phone`, `password`, `auth_key`) VALUES
-(1, 'q', 'q', 'q', 'q@q.q', '+11111111111', '$2y$13$onFgWYBRPHfE6diR5MwVbOWjE.2OfWI7Zf9eD9DP2xMRTNlRBVNFi', '1WaPAiiCymHeQOrZHpiKLaui3x7GAtIh');
+INSERT INTO `user` (`id`, `name`, `surname`, `patronymic`, `email`, `phone`, `password`, `role`, `auth_key`) VALUES
+(1, 'q', 'q', 'q', 'q@q.q', '+11111111111', '$2y$13$onFgWYBRPHfE6diR5MwVbOWjE.2OfWI7Zf9eD9DP2xMRTNlRBVNFi', 0, '1WaPAiiCymHeQOrZHpiKLaui3x7GAtIh'),
+(2, 'admin', 'admin', 'admin', 'admin@bus.ru', '+11111111111', '$2y$13$6tsqJky5vHXWm/YoRuYVjOPzkiFBuWb5XRXmlV7oHObE0qN4KIfB.', 1, '1WaPAiiCymHeQOrZHpiKLaui3x7GAtIhserfesasa');
 
 --
 -- Индексы сохранённых таблиц
@@ -155,7 +157,7 @@ ALTER TABLE `stop_point`
 -- AUTO_INCREMENT для таблицы `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

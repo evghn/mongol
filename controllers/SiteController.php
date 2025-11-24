@@ -64,6 +64,13 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+
+        /*
+            для создания учетной записи админа
+            VarDumper::dump(Yii::$app->security->generatePasswordHash("Superbus"), 10, true);
+            die;
+        */
+
         return $this->render('index');
     }
 

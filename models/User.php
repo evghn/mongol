@@ -37,12 +37,13 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+            [['role'], 'default', 'value' => 0],
             [['name', 'surname', 'patronymic', 'email', 'phone', 'password'], 'required'],
             [['auth_key'], 'string'],
             [['password', 'name', 'surname', 'patronymic', 'email', 'auth_key'], 'string', 'max' => 255],
             [['phone'], 'string', 'max' => 12],
-
             [['email'], 'unique'],
+            [['role'], 'integer'],
         ];
     }
 
@@ -113,5 +114,16 @@ class User extends ActiveRecord implements IdentityInterface
     public function validatePassword($passord)
     {
         return Yii::$app->security->validatePassword($passord, $this->password);
+    }
+
+
+    public function getIsAdmin()
+    {
+        return $this->role === 1;
+    }
+
+    public function getIsClient()
+    {
+        return $this->role === 0;
     }
 }
