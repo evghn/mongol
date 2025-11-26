@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: MySQL-8.4
--- Время создания: Ноя 24 2025 г., 07:23
+-- Время создания: Ноя 26 2025 г., 05:36
 -- Версия сервера: 8.4.6
 -- Версия PHP: 8.3.25
 
@@ -29,18 +29,19 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `doc_type` (
   `id` int UNSIGNED NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL
+  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `id_region` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Дамп данных таблицы `doc_type`
 --
 
-INSERT INTO `doc_type` (`id`, `title`) VALUES
-(1, 'паспорт гражданина РФ'),
-(2, 'заграничный\r\nпаспорт гражданина РФ'),
-(3, 'паспорт гражданина Монголии'),
-(4, 'другой документ');
+INSERT INTO `doc_type` (`id`, `title`, `id_region`) VALUES
+(1, 'паспорт гражданина РФ', 1),
+(2, 'заграничный\r\nпаспорт гражданина РФ', NULL),
+(3, 'паспорт гражданина Монголии', NULL),
+(4, 'другой документ', NULL);
 
 -- --------------------------------------------------------
 
@@ -63,6 +64,24 @@ CREATE TABLE `passport` (
 
 INSERT INTO `passport` (`id`, `user_id`, `passport_type_id`, `passport_expire`, `passport_number`, `passport_another`) VALUES
 (1, 1, 1, '2025-11-29', '111', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `region`
+--
+
+CREATE TABLE `region` (
+  `id` int NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Дамп данных таблицы `region`
+--
+
+INSERT INTO `region` (`id`, `title`) VALUES
+(1, 'ru');
 
 -- --------------------------------------------------------
 
@@ -110,12 +129,19 @@ INSERT INTO `user` (`id`, `name`, `surname`, `patronymic`, `email`, `phone`, `pa
 -- Индексы таблицы `doc_type`
 --
 ALTER TABLE `doc_type`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_region` (`id_region`);
 
 --
 -- Индексы таблицы `passport`
 --
 ALTER TABLE `passport`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `region`
+--
+ALTER TABLE `region`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -148,6 +174,12 @@ ALTER TABLE `passport`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT для таблицы `region`
+--
+ALTER TABLE `region`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT для таблицы `stop_point`
 --
 ALTER TABLE `stop_point`
@@ -158,6 +190,16 @@ ALTER TABLE `stop_point`
 --
 ALTER TABLE `user`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Ограничения внешнего ключа сохраненных таблиц
+--
+
+--
+-- Ограничения внешнего ключа таблицы `doc_type`
+--
+ALTER TABLE `doc_type`
+  ADD CONSTRAINT `doc_type_ibfk_1` FOREIGN KEY (`id_region`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
