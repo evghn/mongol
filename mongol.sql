@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: MySQL-8.4
--- Время создания: Ноя 27 2025 г., 06:51
+-- Время создания: Ноя 27 2025 г., 08:09
 -- Версия сервера: 8.4.6
 -- Версия PHP: 8.3.25
 
@@ -48,7 +48,7 @@ INSERT INTO `direction` (`id`, `title`, `alias`) VALUES
 --
 
 CREATE TABLE `doc_type` (
-  `id` int UNSIGNED NOT NULL,
+  `id` int NOT NULL,
   `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `id_region` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -106,14 +106,65 @@ INSERT INTO `region` (`id`, `title`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `route_stop_point`
+--
+
+CREATE TABLE `route_stop_point` (
+  `id` int NOT NULL,
+  `stop_point_id` int NOT NULL,
+  `time_in` datetime DEFAULT NULL,
+  `time_out` datetime DEFAULT NULL,
+  `stop_time` time DEFAULT NULL,
+  `tabletime_id` int NOT NULL,
+  `region_id` int DEFAULT NULL,
+  `direction_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `route_stop_point_0`
+--
+
+CREATE TABLE `route_stop_point_0` (
+  `id` int NOT NULL,
+  `stop_point_id` int NOT NULL,
+  `time_in` time DEFAULT NULL,
+  `time_out` time DEFAULT NULL,
+  `stop_time` time DEFAULT NULL,
+  `region_id` int DEFAULT NULL,
+  `direction_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Дамп данных таблицы `route_stop_point_0`
+--
+
+INSERT INTO `route_stop_point_0` (`id`, `stop_point_id`, `time_in`, `time_out`, `stop_time`, `region_id`, `direction_id`) VALUES
+(1, 1, NULL, '23:59:00', NULL, 1, 1),
+(2, 2, '01:30:00', '02:00:00', '00:30:00', 1, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `stop_point`
 --
 
 CREATE TABLE `stop_point` (
   `id` int NOT NULL,
-  `name` int NOT NULL,
-  `ru` tinyint NOT NULL DEFAULT '1'
+  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `region_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Дамп данных таблицы `stop_point`
+--
+
+INSERT INTO `stop_point` (`id`, `name`, `region_id`) VALUES
+(1, 'Улан-Удэ', 1),
+(2, 'Гусиноозерск', 1),
+(3, 'Дархан', NULL),
+(4, 'Улан-Батор', NULL);
 
 -- --------------------------------------------------------
 
@@ -185,7 +236,9 @@ ALTER TABLE `doc_type`
 -- Индексы таблицы `passport`
 --
 ALTER TABLE `passport`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `passport_type_id` (`passport_type_id`);
 
 --
 -- Индексы таблицы `region`
@@ -194,10 +247,30 @@ ALTER TABLE `region`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Индексы таблицы `route_stop_point`
+--
+ALTER TABLE `route_stop_point`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `stop_point_id` (`stop_point_id`),
+  ADD KEY `tabletime_id` (`tabletime_id`),
+  ADD KEY `id_region` (`region_id`),
+  ADD KEY `direction_id` (`direction_id`);
+
+--
+-- Индексы таблицы `route_stop_point_0`
+--
+ALTER TABLE `route_stop_point_0`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `stop_point_id` (`stop_point_id`),
+  ADD KEY `region_id` (`region_id`),
+  ADD KEY `direction_id` (`direction_id`);
+
+--
 -- Индексы таблицы `stop_point`
 --
 ALTER TABLE `stop_point`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `region_id` (`region_id`);
 
 --
 -- Индексы таблицы `timetable`
@@ -227,7 +300,7 @@ ALTER TABLE `direction`
 -- AUTO_INCREMENT для таблицы `doc_type`
 --
 ALTER TABLE `doc_type`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT для таблицы `passport`
@@ -242,10 +315,22 @@ ALTER TABLE `region`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT для таблицы `route_stop_point`
+--
+ALTER TABLE `route_stop_point`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `route_stop_point_0`
+--
+ALTER TABLE `route_stop_point_0`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT для таблицы `stop_point`
 --
 ALTER TABLE `stop_point`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT для таблицы `timetable`
@@ -268,6 +353,36 @@ ALTER TABLE `user`
 --
 ALTER TABLE `doc_type`
   ADD CONSTRAINT `doc_type_ibfk_1` FOREIGN KEY (`id_region`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Ограничения внешнего ключа таблицы `passport`
+--
+ALTER TABLE `passport`
+  ADD CONSTRAINT `passport_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `passport_ibfk_2` FOREIGN KEY (`passport_type_id`) REFERENCES `doc_type` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Ограничения внешнего ключа таблицы `route_stop_point`
+--
+ALTER TABLE `route_stop_point`
+  ADD CONSTRAINT `route_stop_point_ibfk_1` FOREIGN KEY (`stop_point_id`) REFERENCES `stop_point` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `route_stop_point_ibfk_2` FOREIGN KEY (`tabletime_id`) REFERENCES `timetable` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `route_stop_point_ibfk_3` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `route_stop_point_ibfk_4` FOREIGN KEY (`direction_id`) REFERENCES `direction` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Ограничения внешнего ключа таблицы `route_stop_point_0`
+--
+ALTER TABLE `route_stop_point_0`
+  ADD CONSTRAINT `route_stop_point_0_ibfk_1` FOREIGN KEY (`stop_point_id`) REFERENCES `stop_point` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `route_stop_point_0_ibfk_2` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `route_stop_point_0_ibfk_3` FOREIGN KEY (`direction_id`) REFERENCES `direction` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Ограничения внешнего ключа таблицы `stop_point`
+--
+ALTER TABLE `stop_point`
+  ADD CONSTRAINT `stop_point_ibfk_1` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Ограничения внешнего ключа таблицы `timetable`
