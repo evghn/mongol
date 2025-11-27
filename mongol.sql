@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: MySQL-8.4
--- Время создания: Ноя 26 2025 г., 05:36
+-- Время создания: Ноя 27 2025 г., 06:51
 -- Версия сервера: 8.4.6
 -- Версия PHP: 8.3.25
 
@@ -20,6 +20,26 @@ SET time_zone = "+00:00";
 --
 -- База данных: `mongol`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `direction`
+--
+
+CREATE TABLE `direction` (
+  `id` int NOT NULL,
+  `title` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `alias` varchar(10) COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Дамп данных таблицы `direction`
+--
+
+INSERT INTO `direction` (`id`, `title`, `alias`) VALUES
+(1, 'В Моголию', 'mn'),
+(2, 'В Россию', 'ru');
 
 -- --------------------------------------------------------
 
@@ -98,6 +118,29 @@ CREATE TABLE `stop_point` (
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `timetable`
+--
+
+CREATE TABLE `timetable` (
+  `id` int NOT NULL,
+  `date_start` datetime NOT NULL,
+  `direction_id` int NOT NULL,
+  `date_end` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Дамп данных таблицы `timetable`
+--
+
+INSERT INTO `timetable` (`id`, `date_start`, `direction_id`, `date_end`) VALUES
+(1, '2025-11-28 23:59:00', 1, '2025-11-29 11:00:00'),
+(2, '2025-11-30 20:00:00', 2, '2025-12-01 07:00:00'),
+(3, '2025-12-05 23:59:00', 1, '2025-12-06 11:00:00'),
+(4, '2025-12-07 20:00:00', 2, '2025-12-08 07:00:00');
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `user`
 --
 
@@ -126,6 +169,12 @@ INSERT INTO `user` (`id`, `name`, `surname`, `patronymic`, `email`, `phone`, `pa
 --
 
 --
+-- Индексы таблицы `direction`
+--
+ALTER TABLE `direction`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Индексы таблицы `doc_type`
 --
 ALTER TABLE `doc_type`
@@ -151,6 +200,13 @@ ALTER TABLE `stop_point`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Индексы таблицы `timetable`
+--
+ALTER TABLE `timetable`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `direction_id` (`direction_id`);
+
+--
 -- Индексы таблицы `user`
 --
 ALTER TABLE `user`
@@ -160,6 +216,12 @@ ALTER TABLE `user`
 --
 -- AUTO_INCREMENT для сохранённых таблиц
 --
+
+--
+-- AUTO_INCREMENT для таблицы `direction`
+--
+ALTER TABLE `direction`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `doc_type`
@@ -186,6 +248,12 @@ ALTER TABLE `stop_point`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT для таблицы `timetable`
+--
+ALTER TABLE `timetable`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT для таблицы `user`
 --
 ALTER TABLE `user`
@@ -200,6 +268,12 @@ ALTER TABLE `user`
 --
 ALTER TABLE `doc_type`
   ADD CONSTRAINT `doc_type_ibfk_1` FOREIGN KEY (`id_region`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Ограничения внешнего ключа таблицы `timetable`
+--
+ALTER TABLE `timetable`
+  ADD CONSTRAINT `timetable_ibfk_1` FOREIGN KEY (`direction_id`) REFERENCES `direction` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
