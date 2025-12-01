@@ -2,7 +2,9 @@
 
 namespace app\models;
 
+use DateTime;
 use Yii;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "timetable".
@@ -60,5 +62,29 @@ class Timetable extends \yii\db\ActiveRecord
     public function getDirection()
     {
         return $this->hasOne(Direction::class, ['id' => 'direction_id']);
+    }
+
+
+    public static function getTimetables()
+    {
+        $date_start = date("Y-m-d H:i:s");
+        $date_end = (new \DateTime($date_start))->modify("+10 days")->format("Y-m-d H:i:s");
+        $date_start0 = self::find()
+            ->select("date_start")
+            ->where([">=", "date_start", $date_start])
+            ->andWhere(["<=", "date_end", $date_end])
+            ->one();
+
+        $date_end = (new \DateTime($date_start0->date_start))->modify("+14 days")->format("Y-m-d H:i:s");
+
+
+        return self::find()
+            ->select(new Expression("concat(title, ': ', date_start)"))
+            ->innerJoin("direction", "direction.id = timetable.direction_id")
+            ->where([">=", "date_start", $date_start0->date_start])
+            ->andWhere(["<=", "date_end", $date_end])
+            ->indexBy("timetable.id")
+            ->column()
+        ;
     }
 }

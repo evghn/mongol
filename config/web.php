@@ -8,6 +8,7 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     "language" => "Ru-ru",
+    "timeZone" => "UTC",
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -34,6 +35,15 @@ $config = [
             // send all mails to a file by default.
             'useFileTransport' => true,
         ],
+
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'dateFormat' => 'php:d.m.Y',
+            'datetimeFormat' => 'php:d.m.Y H:i:s',
+            'timeZone' => 'UTC', // Установите часовой пояс здесь
+        ],
+        // ...
+
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -60,6 +70,7 @@ $config = [
         ],
         'account' => [
             'class' => 'app\modules\account\Module',
+            'defaultRoute' => 'user',
         ],
     ],
     'params' => $params,
